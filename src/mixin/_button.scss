@@ -1,19 +1,51 @@
+@import "../class/button";
 
-
+// 按钮样式
+// @param {Pixel} borderRadius
+// @param {Boolean} boxShadow
+// @param {List} gradient
 //
-// 设置按钮的渐变背景，字体颜色，边框颜色，hover的lighten
-// @param {Color} light
-// @param {Color} dark
-//
-@mixin gradientButton( $light, $dark ){
-  @include background-image(linear-gradient( $light, $dark 40% ));
-  //filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr=#{$light}, endColorstr=#{$dark});
-  @include filter-gradient($light, $dark, vertical);
-  // todo 将 IE9与以下的IE区分开，IE9不用filter（filter貌似和border-radius一起用，radis失效，但是IE9使用inset类型的box-shadow也能产生立体感，其他版本使用filter
-  //filter: progid:DXImageTransform.Microsoft.gradient(enabled=false)\9\0;
+@mixin button(
+  $borderRadius: null,
+  $boxShadow: null,
+  $gradiend: null
+){
+  // 继承基本button样式
+  @extend %#{$EASY_NS}button-common;
 
-  background-color: mix( $light, $dark );
+  // 若需要圆角
+  @if $borderRadius != null {
+    @include border-radius($borderRadius);
+  }
 
-  // 根据背景色渐变设置border颜色
-  border-color: $dark $dark darken( $dark, 15% ) $dark;
+  // 若需要内高光
+  @if $boxShadow != null {
+    @include box-shadow(inset 0 2px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05));
+    &.active,
+    &:active {
+      @include box-shadow(inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05));
+    }
+  }
+
+  // 若需要渐变
+  @if $gradiend != null {
+    // 参数至少有2个
+    $gradiendLen = length($gradiend);
+
+    @if( $gradiendLen >= 2 ){
+    // 检查用户是否指定了百分比
+      @if( length($gradiendLen) == 2 ){
+        // 默认过渡50%
+        append(length($colorList, 50%));
+      }
+      @include background-image(linear-gradient( $gradiend ));
+      // IE Filter
+      @include filter-gradient(nth($gradiend,1), nth($gradiend,2), vertical);
+      // todo 将 IE9与以下的IE区分开，IE9不用filter（filter貌似和border-radius一起用，radis失效，但是IE9使用inset类型的box-shadow也能产生立体感，其他版本使用filter
+      //filter: progid:DXImageTransform.Microsoft.gradient(enabled=false)\9\0;
+
+      // 设置背景色为两种颜色的混合
+      background-color: mix( nth($gradiend,1), nth($gradiend,2) );
+    }
+  }
 }

@@ -8,7 +8,7 @@
 // @param $bdWidth 边框宽度
 // -------------------------------------------------------------------
 
-@mixin bubble-style( $bgColor: null, $bdColor: null, $arrowWidth: null, $bdWidth: null ){
+@mixin bubble( $bgColor: null, $bdColor: null, $arrowWidth: null, $bdWidth: null ){
 
   @extend %bubble-common;
 
